@@ -4,7 +4,32 @@ import Section from "./section";
 
 export = loader;
 declare function loader(mcVersion: number): typeof Chunk;
-declare class Chunk {
+
+// Non-chunk based block containers should implement this
+export declare interface IBlockStorage {
+    getBlock(pos: Vec3): Block;
+    setBlock(pos: Vec3, block: Block): void;
+    getBiomeColor(pos: Vec3): {
+        r: number;
+        g: number;
+        b: number;
+    };
+    setBiomeColor(pos: Vec3, r: number, g: number, b: number): void;
+    getBlockStateId(pos: Vec3): number;
+    getBlockType(pos: Vec3): number;
+    getBlockData(pos: Vec3): number;
+    getBlockLight(pos: Vec3): number;
+    getSkyLight(pos: Vec3): number;
+    getBiome(pos: Vec3): number;
+    setBlockStateId(pos: Vec3, stateId: number): void;
+    setBlockType(pos: Vec3, id: number): void;
+    setBlockData(pos: Vec3, data: Buffer): void;
+    setBlockLight(pos: Vec3, light: number): void;
+    setSkyLight(pos: Vec3, light: number): void;
+    setBiome(pos: Vec3, biome: number): void;
+}
+
+declare class Chunk implements IBlockStorage {
     static fromJson(j: any): Chunk;
     skyLightSent: boolean;
     sections: Section[]; 
@@ -19,17 +44,17 @@ declare class Chunk {
         b: number;
     };
     setBiomeColor(pos: Vec3, r: number, g: number, b: number): void;
-    getBlockStateId(pos: Vec3): Section;
+    getBlockStateId(pos: Vec3): number;
     getBlockType(pos: Vec3): number;
     getBlockData(pos: Vec3): number;
     getBlockLight(pos: Vec3): number;
     getSkyLight(pos: Vec3): number;
     getBiome(pos: Vec3): number;
-    setBlockStateId(pos: Vec3, stateId: number): Section;
+    setBlockStateId(pos: Vec3, stateId: number): void;
     setBlockType(pos: Vec3, id: number): void;
     setBlockData(pos: Vec3, data: Buffer): void;
-    setBlockLight(pos: Vec3, light: number): Section;
-    setSkyLight(pos: Vec3, light: number): Section;
+    setBlockLight(pos: Vec3, light: number): void;
+    setSkyLight(pos: Vec3, light: number): void;
     setBiome(pos: Vec3, biome: number): void;
     dumpBiomes(): void;
     dumpLight(): void;
