@@ -55,6 +55,15 @@ class BitArray {
     return bitarray
   }
 
+  // Helper for initializing 1 bit per value BitArrays
+  static fromBitset (data, bitsPerValue = 1) {
+    return new BitArray({
+      data,
+      capacity: data.length,
+      bitsPerValue
+    })
+  }
+
   get (index) {
     // assert(index >= 0 && index < this.capacity, 'index is out of bounds')
 

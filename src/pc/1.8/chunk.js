@@ -244,10 +244,6 @@ class Chunk {
     return 0xFFFF
   }
 
-  getMaskArray () {
-    return [this.getMask()]
-  }
-
   countVerticalSections () {
     return constants.NUM_SECTIONS
   }

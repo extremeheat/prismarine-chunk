@@ -205,16 +205,14 @@ describe.each(depsByVersion)('Chunk implementation for minecraft %s', (version, 
       const name = chunkDump.substr(0, chunkDump.length - 5)
       const packetData = dataFiles.find(dataFile => dataFile.includes(name))
       const dump = fs.readFileSync(path.join(folder, chunkDump))
-      const data = JSON.parse(
-        fs.readFileSync(path.join(folder, packetData)).toString()
-      )
+      const data = JSON.parse(fs.readFileSync(path.join(folder, packetData), 'utf-8'))
       data.skylightSent = !packetData.includes('nether') && !packetData.includes('end')
 
       let lightData, lightDump
 
       if (serializesLightingDataSeparately) {
         lightData = JSON.parse(fs.readFileSync(path.join(folder, packetData.replace('chunk', 'chunk_light'))).toString())
-        lightDump = fs.readFileSync(path.join(folder, chunkDump.replace('chunk', 'chunk_light')))
+        if (!newLightingDataFormat) lightDump = fs.readFileSync(path.join(folder, chunkDump.replace('chunk', 'chunk_light')), 'utf-8')
       }
 
       test('Loads chunk buffers ' + chunkDump, () => {
@@ -222,8 +220,7 @@ describe.each(depsByVersion)('Chunk implementation for minecraft %s', (version, 
         chunk.load(dump, data.bitMap, data.skyLightSent)
         if (serializesLightingDataSeparately) {
           if (newLightingDataFormat) {
-            const lightDumpObject = JSON.parse(lightDump.toString())
-            chunk.loadLightFromSectionData(lightDumpObject.skyLight, lightDumpObject.blockLight, lightData.skyLightMask, lightData.blockLightMask)
+            chunk.loadLightFromSectionData(lightData.skyLight, lightData.blockLight, lightData.skyLightMask, lightData.blockLightMask)
           } else {
             chunk.loadLight(lightDump, lightData.skyLightMask, lightData.blockLightMask, lightData.emptySkyLightMask, lightData.emptyBlockLightMask)
           }
@@ -240,9 +237,7 @@ describe.each(depsByVersion)('Chunk implementation for minecraft %s', (version, 
 
         if (serializesLightingDataSeparately) {
           if (newLightingDataFormat) {
-            const lightDumpObject = JSON.parse(lightDump.toString())
-            chunk.loadLightFromSectionData(lightDumpObject.skyLight, lightDumpObject.blockLight, lightData.skyLightMask, lightData.blockLightMask)
-
+            chunk.loadLightFromSectionData(lightData.skyLight, lightData.blockLight, lightData.skyLightMask, lightData.blockLightMask)
             const lightChunkData = chunk.dumpLightToSectionData()
             chunk2.loadLightFromSectionData(lightChunkData.skyLight, lightChunkData.blockLight, lightData.skyLightMask, lightData.blockLightMask)
           } else {
@@ -285,10 +280,10 @@ describe.each(depsByVersion)('Chunk implementation for minecraft %s', (version, 
                 b.name,
                 '',
                 ' block state n° ' +
-                    b.stateId +
-                    ' type n°' +
-                    b.type +
-                    " read, which doesn't exist"
+                b.stateId +
+                ' type n°' +
+                b.type +
+                " read, which doesn't exist"
               )
               assert.deepStrictEqual(b, b2)
             }
@@ -310,8 +305,7 @@ describe.each(depsByVersion)('Chunk implementation for minecraft %s', (version, 
         chunk.load(dump, data.bitMap, data.skyLightSent)
         if (serializesLightingDataSeparately) {
           if (newLightingDataFormat) {
-            const lightDumpObject = JSON.parse(lightDump.toString())
-            chunk.loadLightFromSectionData(lightDumpObject.skyLight, lightDumpObject.blockLight, lightData.skyLightMask, lightData.blockLightMask)
+            chunk.loadLightFromSectionData(lightData.skyLight, lightData.blockLight, lightData.skyLightMask, lightData.blockLightMask)
           } else {
             chunk.loadLight(lightDump, lightData.skyLightMask, lightData.blockLightMask, lightData.emptySkyLightMask, lightData.emptyBlockLightMask)
           }
@@ -344,10 +338,10 @@ describe.each(depsByVersion)('Chunk implementation for minecraft %s', (version, 
                 b.name,
                 '',
                 ' block state n° ' +
-                    b.stateId +
-                    ' type n°' +
-                    b.type +
-                    " read, which doesn't exist"
+                b.stateId +
+                ' type n°' +
+                b.type +
+                " read, which doesn't exist"
               )
               assert.deepStrictEqual(b, b2)
             }

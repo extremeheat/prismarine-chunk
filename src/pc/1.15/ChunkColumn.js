@@ -200,10 +200,6 @@ module.exports = (Block, mcData) => {
       return this.sectionMask
     }
 
-    getMaskArray () {
-      return [this.getMask()]
-    }
-
     countVerticalSections () {
       return constants.NUM_SECTIONS
     }
